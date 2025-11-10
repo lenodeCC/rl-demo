@@ -46,7 +46,7 @@ class PPO:
         # Optimize policy for K epochs:
         for _ in range(self.K_epochs):
             # Evaluating old actions and values :
-            logprobs, state_values, dist_entropy = self.agent.evaluate(old_states, old_actions, policy=self.policy)
+            logprobs, state_values, dist_entropy = self.policy.evaluate(old_states, old_actions)
             
             # Finding the ratio (pi_theta / pi_theta__old):
             ratios = torch.exp(logprobs - old_logprobs.detach()).to(self.device)

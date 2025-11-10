@@ -1,4 +1,6 @@
 from torch import nn
+from torch.distributions import Categorical
+import torch
 
 class ActorCritic(nn.Module):
     def __init__(self, state_dim, action_dim, n_latent_var):
@@ -25,4 +27,15 @@ class ActorCritic(nn.Module):
         
     def forward(self, state):
         return self.action_layer(state)
+    
+    def evaluate(self, state, action):
+        action_probs = self.action_layer(state)
+        # Categorical代表随机策略
+        dist = Categorical(action_probs)
         
+        action_logprobs = dist.log_prob(action)
+        dist_entropy = dist.entropy()
+        #cricle对state评价
+        state_value = self.value_layer(state)
+        
+        return action_logprobs, torch.squeeze(state_value), dist_entropy

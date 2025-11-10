@@ -16,7 +16,7 @@ class PlayerAgent:
     
     def act(self, state, memory):
         state = torch.tensor(state).float().to(self.device) 
-        action_probs = self.policy.action_layer(state)
+        action_probs = self.policy.forward(state)
         dist = Categorical(action_probs) #按照给定的概率分布来进行采样
         action = dist.sample()
         
@@ -25,18 +25,3 @@ class PlayerAgent:
         memory.logprobs.append(dist.log_prob(action))
         
         return action.item()
-
-    def evaluate(self, state, action, policy=None):
-        action_probs = self.policy.action_layer(state)
-        
-        # policy = self.policy if policy is None else policy
-        
-        # Categorical代表随机策略
-        dist = Categorical(action_probs)
-        
-        action_logprobs = dist.log_prob(action)
-        dist_entropy = dist.entropy()
-        #cricle对state评价
-        state_value = policy.value_layer(state)
-        
-        return action_logprobs, torch.squeeze(state_value), dist_entropy
