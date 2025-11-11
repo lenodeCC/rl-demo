@@ -9,5 +9,6 @@ def auto_select_device():
     else:
         return torch.device("cpu")
 
-        
-deault_device = auto_select_device()
+
+# default_device = auto_select_device()
+default_device = torch.device("cpu")
